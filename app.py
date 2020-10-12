@@ -40,9 +40,9 @@ def home():
         f"<br/>"
         f"/api/v1.0/tobs<br/>"
         f"<br/>"
-        f"/api/v1.0/<start><br/>"
+        f"/api/v1.0/start<br/>"
         f"<br/>"
-        f"/api/v1.0/<start>/<end><br/>"
+        f"/api/v1.0/start/end<br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -74,6 +74,22 @@ def stations():
     stations = list(np.ravel(results))
     return jsonify(stations)
 
+@app.route("/api/v1.0/tobs")
+def tobs():
+    # create our session from python to the DB
+    session = Session(engine)
+    # Perform query then close connection
+    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= '2016-08-23').group_by(Measurement.date).order_by(Measurement.date).all()
+    session.close()
+
+    # Create a dictionary from the query output
+    tobs_results = []
+    for date, tobs in results:
+        tobs_dict = {}
+        tobs_dict['date'] = date
+        tobs_dict['tobs'] = tobs
+        tobs_results.append(tobs_dict)
+    return jsonify(tobs_results)
 
 if __name__ == '__main__':
     app.run(debug=True)
