@@ -35,14 +35,19 @@ def home():
         f"Available Routes:<br/>"
         f"<br/>"
         f"/api/v1.0/precipitation<br/>"
+        f"This will display the last 12 months of precipitation data"
         f"<br/>"
         f"/api/v1.0/stations<br/>"
+        f"This will display the list of weather stations"
         f"<br/>"
         f"/api/v1.0/tobs<br/>"
+        f"This will display the last years worth of temperature observations from station USC00519281"
         f"<br/>"
         f"/api/v1.0/start<br/>"
+        f"Given a start date, this will display the min, avg and max temperature for all dates greater than and equal to the start date"
         f"<br/>"
         f"/api/v1.0/start/end<br/>"
+        f"Given a start and end date, this will display the min, avg, and max temperature for dates between the start and end date inclusively"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -90,6 +95,8 @@ def tobs():
         tobs_dict['tobs'] = tobs
         tobs_results.append(tobs_dict)
     return jsonify(tobs_results)
+
+@app.route("/api/v1.0/<start>")
 
 if __name__ == '__main__':
     app.run(debug=True)
