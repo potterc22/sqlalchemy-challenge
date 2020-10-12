@@ -62,7 +62,17 @@ def precipitation():
         prcp_results.append(prcp_dict)
     return jsonify(prcp_results)
         
+@app.route("/api/v1.0/stations")
+def stations():
+    # create our session from python to the DB
+    session = Session(engine)
+    # Perform query then close connection
+    results = session.query(Station.station).all()
+    session.close()
 
+    # Convert list of tuples into normal list
+    stations = list(np.ravel(results))
+    return jsonify(stations)
 
 
 if __name__ == '__main__':
