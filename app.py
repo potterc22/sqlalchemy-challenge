@@ -44,10 +44,10 @@ def home():
         f"This will display the last years worth of temperature observations from station USC00519281<br/>"
         f"<br/>"
         f"/api/v1.0/start<br/>"
-        f"Given a start date, this will display the min, avg and max temperature for all dates greater than and equal to the start date<br/>"
+        f"Given a start date (YYYY-MM-DD), this will display the min, avg and max temperature for all dates greater than and equal to the start date<br/>"
         f"<br/>"
         f"/api/v1.0/start/end<br/>"
-        f"Given a start and end date, this will display the min, avg, and max temperature for dates between the start and end date inclusively<br/>"
+        f"Given a start and end date (YYYY-MM-DD), this will display the min, avg, and max temperature for dates between the start and end date inclusively<br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
@@ -72,12 +72,16 @@ def stations():
     # create our session from python to the DB
     session = Session(engine)
     # Perform query then close connection
-    results = session.query(Station.station).all()
+    results = session.query(Station.station, Station.name).all()
     session.close()
 
-    # Convert list of tuples into normal list
-    stations = list(np.ravel(results))
-    return jsonify(stations)
+    station_list = []
+    for id, name in results:
+        dictionary = {}
+        dictionary['station'] = id
+        dictionary['name'] = name
+        station_list.append(dictionary)
+    return jsonify(station_list)
 
 @app.route("/api/v1.0/tobs")
 def tobs():
